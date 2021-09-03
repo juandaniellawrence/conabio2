@@ -5,6 +5,8 @@ RUN wget --no-check-certificate https://github.com/stedolan/jq/releases/download
 RUN cp /tmp/jq-linux64 /usr/bin/jq
 RUN chmod +x /usr/bin/jq
 
+RUN jq 'to_entries | map_values({ (.key) : ("$" + .key) }) | reduce .[] as $item ({}; . + $item)' ./src/config.json > ./src/config.tmp.json && mv ./src/config.tmp.json ./src/config.json
+
 WORKDIR /app
 COPY . .
 RUN npm install && npm run build
